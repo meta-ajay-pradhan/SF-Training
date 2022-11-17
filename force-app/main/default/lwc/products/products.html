@@ -1,0 +1,18 @@
+<template>
+   <lightning-input type="search" label="Search" onchange={handleSearchProducts}>
+   </lightning-input>
+   <lightning-datatable
+            data-id="datarow"
+            key-field="Id"
+            data={products}
+            columns={columns}
+            selected-rows={selectedProductIds}
+            onrowselection={rowSelection}
+   ></lightning-datatable>
+   <!-- <button onclick={log}>Log</button> -->
+   <c-pagination current-page={currentPage}
+                  total-page={totalPage}
+                  items-per-page={productsPerPage}
+                  onupdatepage={updatePage}
+                  total-item={totalProducts}></c-pagination>
+</template>
