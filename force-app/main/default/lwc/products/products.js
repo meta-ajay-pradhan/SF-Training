@@ -30,7 +30,6 @@ export default class Products extends LightningElement {
     }
 
     initPagination() {
-        console.log('test');
         this.totalProducts = this.filteredProducts.length; 
         this.totalPage = parseInt(Math.ceil(this.totalProducts / this.productsPerPage));
         this.currentPage = 1;
@@ -63,11 +62,6 @@ export default class Products extends LightningElement {
     }
 
     rowSelection(event) {
-        // event.detail.selectedRows.map((event) => {
-        //     // this.selectedProductIds.add(event.Id);
-        //     console.log("fgdfgdfgdfg");
-            
-        // });
         // new selected Ids lene hain set pe
         const selectedProducts = [...event.detail?.selectedRows];
         const newSelectedIds = new Set(selectedProducts.map( prod => prod.Id));
@@ -87,11 +81,8 @@ export default class Products extends LightningElement {
             }
         })
         // end main update krdena hain
-    
-        // this.selectedProductIds = [...oldSelectedIds];
         const updateSelectedProdEvent = new CustomEvent('selectedprodupdate', { detail: [...oldSelectedIds]});
         this.dispatchEvent(updateSelectedProdEvent);
-        //
     }
 
     log() {
