@@ -1,33 +1,39 @@
 import { LightningElement, wire, api } from 'lwc';
-import getProductList from '@salesforce/apex/ProductController.getProductList';
+
 
 export default class Products extends LightningElement {
     error;
-    allProducts = [];
+    allProds;
+    @api
+    get allProducts() {
+        return this.allProds;
+    }
+    set allProducts(value) {
+        this.allProds = Object.values(value);
+        console.log(this.allProds);
+        this.filteredProducts = this.allProds;
+        this.initPagination();
+        this.handlePage();
+    }
+    
     filteredProducts = [];
-    @api selectedProductIds;
+    sprod;
+    @api 
+    get  selectedProductIds() {
+        return this.sprod;
+    }
+    set  selectedProductIds(value) {
+        this.sprod = value;
+    }
     products = [];
     currentPage = 1;
     totalPage = 0;
     productsPerPage = 5;
     totalProducts = 0;
 
-    columns=[
-        {label: 'Product Name', fieldName: 'Name', type: 'text'},
-        {label: 'Price', fieldName: 'Price__c', type: 'currency'},
-        {label: 'Product Code', fieldName: 'ProductCode', type: 'text'},
-        {label: 'Available Units', fieldName: 'Available_Units__c', type: 'number'},
-    ]
+    @api columns;
 
-    @wire(getProductList)
-    wireProducts({error, data}) {
-        if(data) {
-            this.allProducts = data;
-            this.filteredProducts = this.allProducts;
-            this.initPagination();
-            this.handlePage();
-        }
-    }
+    
 
     initPagination() {
         this.totalProducts = this.filteredProducts.length; 
@@ -37,9 +43,11 @@ export default class Products extends LightningElement {
 
     handlePage() {
         this.products = this.filteredProducts?.slice((this.currentPage - 1)*this.productsPerPage,  (this.currentPage - 1)*this.productsPerPage + this.productsPerPage);
-        this.template.querySelector(
-            '[data-id="datarow"]'
-          ).selectedRows = this.selectedProductIds;
+        if(this.selectedProductIds.length > 0) {
+            this.template.querySelector(
+                '[data-id="datarow"]'
+              ).selectedRows = this.selectedProductIds;
+        }
     }
 
     updatePage(event) {
