@@ -1,3 +1,10 @@
-<template>
-    
+<template>  
+    <lightning-datatable
+        data-id="datarowcart"
+        key-field="Id"
+        data={cartProducts}
+        columns={columns}
+        onsave={handleSave}
+        draft-values={draftValues}
+        selected-rows={selectedProductIds}></lightning-datatable>
 </template>

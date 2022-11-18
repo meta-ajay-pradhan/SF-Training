@@ -10,7 +10,6 @@ export default class Products extends LightningElement {
     }
     set allProducts(value) {
         this.allProds = Object.values(value);
-        console.log(this.allProds);
         this.filteredProducts = this.allProds;
         this.initPagination();
         this.handlePage();
@@ -51,16 +50,13 @@ export default class Products extends LightningElement {
     }
 
     updatePage(event) {
-        console.log(event.detail);
         this.currentPage = event.detail;
         this.handlePage();
     }
     handleSearchProducts(event) {
-        console.log(event.target.value);
         const filterString = event.target.value;
 
         if(filterString === '') {
-            console.log('allprod');
             this.filteredProducts = this.allProducts;
         }else{
             this.filteredProducts = this.allProducts.filter( prod => prod.Name.toLowerCase().includes(filterString.toLowerCase())); 

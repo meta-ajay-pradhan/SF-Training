@@ -4,7 +4,7 @@ import getProductList from '@salesforce/apex/ProductController.getProductList';
 export default class PurchaseProduct extends LightningElement {
     allProducts = {};
     selectedProductIds = [];
-    cartProducts = {};
+    @track cartProducts = {};
     columns=[
         {label: 'Product Name', fieldName: 'Name', type: 'text'},
         {label: 'Price', fieldName: 'Price__c', type: 'currency'},
@@ -47,7 +47,15 @@ export default class PurchaseProduct extends LightningElement {
         })
 
         this.cartProducts = {...cartProds};
-        console.log('cartPRods', this.cartProducts);
+    }
+
+    updateQuantity(event) {
+        
+        const records = event.detail;
+        
+        for(let i = 0; i < records.length; ++i) {
+            this.cartProducts[records[i].Id].Unit = records[i].Unit;
+        }
     }
 
    

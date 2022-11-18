@@ -4,5 +4,9 @@
                 columns={columns}
                 onselectedprodupdate={updateSelectedProducts}></c-products>
     <c-text text={selectedProductIds.length}></c-text>
-    <c-cart></c-cart>
+    <c-cart cart-products={cartProducts}
+            all-products={allProducts}
+            selected-product-ids={selectedProductIds}
+            onupdatequantity={updateQuantity}
+            columns={columns}></c-cart>
 </template>
