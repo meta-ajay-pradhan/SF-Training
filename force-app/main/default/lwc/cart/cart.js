@@ -2,6 +2,7 @@ import { api, LightningElement } from "lwc";
 import { ShowToastEvent } from "lightning/platformShowToastEvent";
 
 export default class Cart extends LightningElement {
+  products = [];
   @api allProducts;
   cartProd;
   @api
@@ -10,6 +11,8 @@ export default class Cart extends LightningElement {
   }
   set cartProducts(value) {
     this.cartProd = Object.values(value);
+    this.initPagination();
+    this.handlePage();
   }
 
   @api selectedProductIds;
@@ -39,6 +42,11 @@ export default class Cart extends LightningElement {
     ];
   }
   draftValues;
+
+  currentPage = 1;
+  totalPage = 0;
+  productsPerPage = 5;
+  totalCartProducts = 0;
 
   handleSave(event) {
     const records = event.detail.draftValues.slice().map((draftValue) => {
@@ -82,18 +90,55 @@ export default class Cart extends LightningElement {
   }
 
   callRowAction(event) {
-    const recId =  event.detail.row.Id;  
+    const recId = event.detail.row.Id;
     const actionName = event.detail.action.name;
     let customEvent;
-    switch(actionName) {
-        case 'Delete' : 
-        customEvent = new CustomEvent('removefromcart', {
-                detail: recId
-            });
-            break;
+    switch (actionName) {
+      case "Delete":
+        customEvent = new CustomEvent("removefromcart", {
+          detail: recId
+        });
+        break;
     }
-    if(customEvent){
-        this.dispatchEvent(customEvent);
+    if (customEvent) {
+      this.dispatchEvent(customEvent);
+    }
+  }
+
+  initPagination() {
+    this.totalCartProducts = this.cartProducts.length;
+    this.totalPage = parseInt(
+      Math.ceil(this.totalCartProducts / this.productsPerPage)
+    );
+    this.currentPage = 1;
+  }
+
+  handlePage() {
+    this.products = this.cartProducts?.slice(
+      (this.currentPage - 1) * this.productsPerPage,
+      (this.currentPage - 1) * this.productsPerPage + this.productsPerPage
+    );
+    if (this.cartProducts.length > 0) {
+      this.template.querySelector(
+        '[data-id="datarowcart"]'
+      ).selectedRows = this.selectedProductIds;
+    }
+  }
+
+  updatePage(event) {
+    this.currentPage = event.detail;
+    this.handlePage();
+  }
+
+  rowSelection(event) {
+    try {
+      const selectedProducts = [...event.detail?.selectedRows].map(prod => prod.Id);
+      const invoiceChangeEvent = new CustomEvent("invoiceselectedproducts", {
+        detail: selectedProducts
+      });
+      this.dispatchEvent(invoiceChangeEvent);
+    } catch (error) {
+      console.log(error);
     }
   }
 }

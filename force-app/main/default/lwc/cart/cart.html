@@ -1,11 +1,20 @@
-<template>  
-    <lightning-datatable
-        data-id="datarowcart"
-        key-field="Id"
-        data={cartProducts}
-        columns={columns}
-        onsave={handleSave}
-        draft-values={draftValues}
-        onrowaction={callRowAction}
-        selected-rows={selectedProductIds}></lightning-datatable>
+<template>
+  <lightning-datatable
+    data-id="datarowcart"
+    key-field="Id"
+    data={products}
+    columns={columns}
+    onsave={handleSave}
+    draft-values={draftValues}
+    onrowselection={rowSelection}
+    onrowaction={callRowAction}
+    selected-rows={selectedProductIds}
+  ></lightning-datatable>
+  <c-pagination
+    current-page={currentPage}
+    total-page={totalPage}
+    items-per-page={productsPerPage}
+    onupdatepage={updatePage}
+    total-item={totalCartProducts}
+  ></c-pagination>
 </template>
