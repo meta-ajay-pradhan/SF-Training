@@ -58,5 +58,14 @@ export default class PurchaseProduct extends LightningElement {
         }
     }
 
+    removeFromCart(event) {
+        console.log(event.detail);
+        const recId = event.detail;
+        const cartProds = this.cartProducts;
+        this.selectedProductIds = this.selectedProductIds.filter(prodId => prodId !== recId);
+        delete cartProds[recId];
+        this.cartProducts = {...cartProds};
+    }
+
    
 }
