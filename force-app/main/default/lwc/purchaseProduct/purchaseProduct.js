@@ -60,7 +60,12 @@ export default class PurchaseProduct extends LightningElement {
 
     for (let i = 0; i < records.length; ++i) {
       this.cartProducts[records[i].Id].Unit = records[i].Unit;
+    //   TODO Update invoice selected for cart datatable checkbox
+      if(this.invoiceSelectedProducts.hasOwnProperty(records[i].Id)) {
+        this.invoiceSelectedProducts[records[i].Id].Unit = records[i].Unit;
+      }
     }
+    this.invoiceSelectedProducts = {...this.invoiceSelectedProducts};
   }
 
   removeFromCart(event) {

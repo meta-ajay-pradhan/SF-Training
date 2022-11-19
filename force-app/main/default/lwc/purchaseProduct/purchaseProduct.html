@@ -1,14 +1,19 @@
 <template>
-    <c-products  selected-product-ids={selectedProductIds} 
-                all-products={allProducts}
-                columns={columns}
-                onselectedprodupdate={updateSelectedProducts}></c-products>
-    <c-text text={selectedProductIds.length}></c-text>
-    <c-cart cart-products={cartProducts}
-            all-products={allProducts}
-            selected-product-ids={selectedProductIds}
-            onupdatequantity={updateQuantity}
-            onremovefromcart={removeFromCart}
-            oninvoiceselectedproducts={handleInvoiceSelectedProducts}
-            columns={columns}></c-cart>
+  <c-products
+    selected-product-ids={selectedProductIds}
+    all-products={allProducts}
+    columns={columns}
+    onselectedprodupdate={updateSelectedProducts}
+  ></c-products>
+  <c-text text={selectedProductIds.length}></c-text>
+  <c-cart
+    cart-products={cartProducts}
+    all-products={allProducts}
+    selected-product-ids={selectedProductIds}
+    onupdatequantity={updateQuantity}
+    onremovefromcart={removeFromCart}
+    oninvoiceselectedproducts={handleInvoiceSelectedProducts}
+    columns={columns}
+  ></c-cart>
+  <c-invoice columns={columns} products={invoiceSelectedProducts}></c-invoice>
 </template>
