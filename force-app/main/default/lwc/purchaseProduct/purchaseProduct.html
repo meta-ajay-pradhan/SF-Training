@@ -1,19 +1,14 @@
 <template>
-  <c-products
-    selected-product-ids={selectedProductIds}
-    all-products={allProducts}
-    columns={columns}
-    onselectedprodupdate={updateSelectedProducts}
-  ></c-products>
-  <c-text text={selectedProductIds.length}></c-text>
-  <c-cart
-    cart-products={cartProducts}
-    all-products={allProducts}
-    selected-product-ids={selectedProductIds}
-    onupdatequantity={updateQuantity}
-    onremovefromcart={removeFromCart}
-    oninvoiceselectedproducts={handleInvoiceSelectedProducts}
-    columns={columns}
-  ></c-cart>
-  <c-invoice columns={columns} products={invoiceSelectedProducts}></c-invoice>
+  <lightning-card if:true={prodComponent} title="Products" icon-name="custom:custom63">
+    <c-products onswitchcomponent={handleComponentChange} selected-product-ids={selectedProductIds} all-products={allProducts} columns={columns}
+      onselectedprodupdate={updateSelectedProducts}></c-products>
+  </lightning-card>
+  <lightning-card if:true={cartComponent} title="Cart" icon-name="custom:custom63">
+    <c-cart onswitchcomponent={handleComponentChange} cart-products={cartProducts} all-products={allProducts} invoice-product-ids={invoiceSelectedProducts}
+      onupdatequantity={updateQuantity} onremovefromcart={removeFromCart}
+      oninvoiceselectedproducts={handleInvoiceSelectedProducts} columns={columns}></c-cart>
+  </lightning-card>
+  <lightning-card if:true={invoiceComponent} title="Invoice" icon-name="custom:custom63">
+  <c-invoice onswitchcomponent={handleComponentChange} columns={columns} products={invoiceSelectedProducts} onreset={handleReset}></c-invoice>
+</lightning-card>
 </template>

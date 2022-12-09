@@ -1,20 +1,16 @@
 <template>
-  <lightning-datatable
-    data-id="datarowcart"
-    key-field="Id"
-    data={products}
-    columns={columns}
-    onsave={handleSave}
-    draft-values={draftValues}
-    onrowselection={rowSelection}
-    onrowaction={callRowAction}
-    selected-rows={selectedProductIds}
-  ></lightning-datatable>
-  <c-pagination
-    current-page={currentPage}
-    total-page={totalPage}
-    items-per-page={productsPerPage}
-    onupdatepage={updatePage}
-    total-item={totalCartProducts}
-  ></c-pagination>
+  <lightning-datatable data-id="datarowcart" key-field="Id" data={products} columns={columns} onsave={handleSave}
+    draft-values={draftValues} onrowselection={rowSelection} onrowaction={callRowAction}
+    selected-rows={invoiceProductIds}></lightning-datatable>
+  <c-pagination current-page={currentPage} total-page={totalPage} items-per-page={productsPerPage}
+    onupdatepage={updatePage} total-item={totalCartProducts}></c-pagination>
+
+  <div class="slds-align_absolute-center">
+    <lightning-button class="slds-m-top_x-large slds-m-horizontal_small" onclick={switchToProd} variant="brand" label="Back">
+    </lightning-button>
+    <lightning-button onclick={switchToInvoice} class="slds-m-top_x-large" variant="brand"
+      disabled={isDisabled} label="Generate Invoice"></lightning-button>
+  </div>
+  <!-- <lightning-button class="slds-align_absolute-center slds-m-top_x-large" variant="brand"  label="Products "></lightning-button> -->
+
 </template>

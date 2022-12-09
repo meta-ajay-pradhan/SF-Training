@@ -1,0 +1,14 @@
+<template>
+    <lightning-card title="Orders" icon-name="custom:custom63">
+        <lightning-datatable key-field="Id" hide-checkbox-column="true" data={viewOrder} columns={columns}>
+        </lightning-datatable>
+        <c-pagination current-page={currentPage} total-page={totalPage} items-per-page={OrdersPerPage}
+            onupdatepage={updatePage} total-item={totalOrders}></c-pagination>
+        <div class="slds-align_absolute-center">
+            <lightning-button class=" slds-m-top_x-large" onclick={switchToPurchase} variant="brand"
+                label="Make Purchase">
+            </lightning-button>
+        </div>
+    </lightning-card>
+
+</template>

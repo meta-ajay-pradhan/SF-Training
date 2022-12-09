@@ -1,8 +1,11 @@
 <template>
-    <lightning-datatable
-    key-field="Id"
-    data={products}
-    columns={columns}
-    hide-checkbox-column="true"
-  ></lightning-datatable>
+  <lightning-datatable key-field="Id" data={products} columns={columns} hide-checkbox-column="true">
+  </lightning-datatable>
+
+  <div class="slds-align_absolute-center">
+    <lightning-button class=" slds-m-top_x-large slds-m-horizontal_small" onclick={switchToCart} variant="brand" label="Back">
+    </lightning-button>
+    <lightning-button class="slds-m-top_x-large" variant="brand" disabled={isDisabled}
+      onclick={placeOrder} label="Place Order"></lightning-button>
+  </div>
 </template>

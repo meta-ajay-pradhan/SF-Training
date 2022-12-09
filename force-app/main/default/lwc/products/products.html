@@ -1,18 +1,20 @@
 <template>
-   <lightning-input type="search" label="Search" onchange={handleSearchProducts}>
-   </lightning-input>
-   <lightning-datatable
-            data-id="datarow"
-            key-field="Id"
-            data={products}
-            columns={columns}
-            selected-rows={selectedProductIds}
-            onrowselection={rowSelection}
-   ></lightning-datatable>
+   <div class="slds-list_horizontal slds-has-block-links_space">
+      <lightning-input class="slds-size_3-of-5 slds-m-horizontal_x-small" type="search" label="Search"
+         
+         onchange={handleSearchProducts}>
+      </lightning-input>
+      <button class="slds-button slds-button_brand " onclick={switchToCart} disabled={isDisabled} style="height: 35px; margin: 20px">Go To Cart</button>
+   </div>
+   <lightning-datatable data-id="datarow" key-field="Id" data={products} columns={columns}
+      selected-rows={selectedProductIds} onrowselection={rowSelection}></lightning-datatable>
    <!-- <button onclick={log}>Log</button> -->
-   <c-pagination current-page={currentPage}
-                  total-page={totalPage}
-                  items-per-page={productsPerPage}
-                  onupdatepage={updatePage}
-                  total-item={totalProducts}></c-pagination>
+   <c-pagination current-page={currentPage} total-page={totalPage} items-per-page={productsPerPage}
+      onupdatepage={updatePage} total-item={totalProducts}></c-pagination>
+
+   <div class="slds-align_absolute-center">
+      <lightning-button class=" slds-m-top_x-large" onclick={switchToOrder} variant="brand"
+           label="Back">
+      </lightning-button>
+   </div>
 </template>

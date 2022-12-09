@@ -1,5 +1,6 @@
 <template>
     <div>
-        <c-purchase-product></c-purchase-product>
+        <c-orders if:true={orderComponent} onswitchcomponent={handleComponentChange}></c-orders>
+        <c-purchase-product if:true={purchaseComponent} onswitchcomponent={handleComponentChange}></c-purchase-product>
     </div>
 </template>

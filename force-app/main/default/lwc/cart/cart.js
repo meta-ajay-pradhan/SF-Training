@@ -2,6 +2,7 @@ import { api, LightningElement } from "lwc";
 import { ShowToastEvent } from "lightning/platformShowToastEvent";
 
 export default class Cart extends LightningElement {
+  isDisabled = true;
   products = [];
   @api allProducts;
   cartProd;
@@ -15,7 +16,15 @@ export default class Cart extends LightningElement {
     this.handlePage();
   }
 
-  @api selectedProductIds;
+  invoiceProdIds = [];
+  @api
+  get invoiceProductIds() {
+    return this.invoiceProdIds;
+  }
+  set invoiceProductIds(value) {
+    this.invoiceProdIds = Object.keys(value);
+    this.isDisabled = this.invoiceProductIds.length <= 0;
+  }
 
   col;
   @api
@@ -118,10 +127,10 @@ export default class Cart extends LightningElement {
       (this.currentPage - 1) * this.productsPerPage,
       (this.currentPage - 1) * this.productsPerPage + this.productsPerPage
     );
-    if (this.cartProducts.length > 0) {
+    if (this.invoiceProductIds.length > 0) {
       this.template.querySelector(
         '[data-id="datarowcart"]'
-      ).selectedRows = this.selectedProductIds;
+      ).selectedRows = this.invoiceProductIds;
     }
   }
 
@@ -132,13 +141,40 @@ export default class Cart extends LightningElement {
 
   rowSelection(event) {
     try {
-      const selectedProducts = [...event.detail?.selectedRows].map(prod => prod.Id);
+      const newSelectedIds = [...event.detail?.selectedRows].map(prod => prod.Id);
+      const newSelectedIdsSet = new Set(newSelectedIds);
+      const invoiceSelectedIds = new Set(this.invoiceProductIds);
+      const currPageProdIDs = this.products.map(prod => prod.Id);
+      for (let i = 0; i < currPageProdIDs.length; ++i) {
+        if ((!newSelectedIdsSet.has(currPageProdIDs[i])) && invoiceSelectedIds.has(currPageProdIDs[i])) {
+          invoiceSelectedIds.delete(currPageProdIDs[i]);
+        }
+      }
+      for (let i = 0; i < newSelectedIds.length; ++i) {
+        invoiceSelectedIds.add(newSelectedIds[i]);
+      }
       const invoiceChangeEvent = new CustomEvent("invoiceselectedproducts", {
-        detail: selectedProducts
+        detail: [...invoiceSelectedIds]
       });
       this.dispatchEvent(invoiceChangeEvent);
+
     } catch (error) {
       console.log(error);
     }
+  }
+
+  switchToInvoice() {
+    const compChangeEvt = new CustomEvent('switchcomponent', {
+        detail: "INVOICE"
+    })
+    this.dispatchEvent(compChangeEvt);
+  }
+
+  switchToProd() {
+    this.dispatchEvent(
+      new CustomEvent( 'switchcomponent', {
+        detail: "PRODUCT"
+      })
+    )
   }
 }

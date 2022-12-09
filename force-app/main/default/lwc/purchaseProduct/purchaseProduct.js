@@ -2,6 +2,9 @@ import { LightningElement, wire, track } from "lwc";
 import getProductList from "@salesforce/apex/ProductController.getProductList";
 
 export default class PurchaseProduct extends LightningElement {
+  prodComponent = true;
+  cartComponent = false;
+  invoiceComponent = false;
   allProducts = {};
   selectedProductIds = [];
   invoiceSelectedProducts = {};
@@ -17,16 +20,26 @@ export default class PurchaseProduct extends LightningElement {
     }
   ];
 
-  @wire(getProductList)
-  wireProducts({ error, data }) {
-    if (data) {
-      // this.allProducts = data;
+  // @wire(getProductList)
+  // wireProducts({ error, data }) {
+  //   if (data) {
+  //     // this.allProducts = data;
+  //     
+
+  //   }
+  // }
+  connectedCallback() {
+    getProductList().then(data => {
       const allProds = {};
       for (let i = 0; i < data.length; ++i) {
         allProds[`${data[i].Id}`] = data[i];
       }
+      console.log(allProds);
       this.allProducts = allProds;
-    }
+    })
+      .catch(error => {
+        this.error = error;
+      });
   }
 
   updateSelectedProducts(event) {
@@ -60,46 +73,77 @@ export default class PurchaseProduct extends LightningElement {
 
     for (let i = 0; i < records.length; ++i) {
       this.cartProducts[records[i].Id].Unit = records[i].Unit;
-    //   TODO Update invoice selected for cart datatable checkbox
-      if(this.invoiceSelectedProducts.hasOwnProperty(records[i].Id)) {
+      if (this.invoiceSelectedProducts.hasOwnProperty(records[i].Id)) {
         this.invoiceSelectedProducts[records[i].Id].Unit = records[i].Unit;
       }
     }
-    this.invoiceSelectedProducts = {...this.invoiceSelectedProducts};
+    this.invoiceSelectedProducts = { ...this.invoiceSelectedProducts };
   }
 
   removeFromCart(event) {
-    console.log(event.detail);
     const recId = event.detail;
     const cartProds = this.cartProducts;
     this.selectedProductIds = this.selectedProductIds.filter(
       (prodId) => prodId !== recId
     );
+    delete this.invoiceSelectedProducts[recId];
     delete cartProds[recId];
     this.cartProducts = { ...cartProds };
+    this.invoiceSelectedProducts = { ...this.invoiceSelectedProducts };
+
   }
 
   handleInvoiceSelectedProducts(event) {
     try {
       const newSelectedIds = event.detail;
-      const newSelectedIdsSet = new Set(newSelectedIds);
-      const invoiceSelectedIds = Object.keys(this.invoiceSelectedProducts);
-      const invoiceSelectedProds = this.invoiceSelectedProducts;
-      for (let i = 0; i < invoiceSelectedIds.length; ++i) {
-        if (!newSelectedIdsSet.has(invoiceSelectedIds[i])) {
-          delete invoiceSelectedProds[invoiceSelectedIds[i]];
-        }
-      }
-
+      const newInvoiceProds = {};
       for (let i = 0; i < newSelectedIds.length; ++i) {
-        if (!invoiceSelectedProds.hasOwnProperty(newSelectedIds[i])) {
-          invoiceSelectedProds[newSelectedIds[i]] = this.cartProducts[
-            newSelectedIds[i]
-          ];
-        }
+        newInvoiceProds[newSelectedIds[i]] = this.cartProducts[newSelectedIds[i]];
+      }
+      this.invoiceSelectedProducts = { ...newInvoiceProds };
+    } catch (error) {
+
+    }
+  }
+
+  handleReset(event) {
+    const orderedProdsList = Object.values(this.invoiceSelectedProducts);
+    const allProds = JSON.parse(JSON.stringify(this.allProducts));
+    for (let i = 0; i < orderedProdsList.length; ++i) {
+      allProds[orderedProdsList[i].Id].Available_Units__c -= orderedProdsList[i].Unit;
+      if (allProds[orderedProdsList[i].Id].Available_Units__c <= 0) {
+        delete allProds[orderedProdsList[i].Id];
       }
 
-      this.invoiceSelectedProducts = { ...invoiceSelectedProds };
-    } catch (error) {}
+    }
+    console.log(allProds);
+    this.allProducts = { ...allProds };
+    this.cartProducts = {};
+    this.selectedProductIds = [];
+    this.invoiceSelectedProducts = {};
+
+    this.dispatchEvent(
+      new CustomEvent('switchcomponent', {
+        detail: "ORDER"
+      })
+    );
+
+  }
+  handleComponentChange(event) {
+    const component = event.detail;
+    this.prodComponent = false;
+    this.invoiceComponent = false;
+    this.cartComponent = false;
+    if (component === "CART") {
+      this.cartComponent = true;
+    } else if (component === "INVOICE") {
+      this.invoiceComponent = true;
+    } else if (component === "ORDER") {
+      this.dispatchEvent(new CustomEvent('switchcomponent', {
+        detail: component
+      }));
+    } else if (component === "PRODUCT") {
+      this.prodComponent = true;
+    }
   }
 }
