@@ -1,5 +1,9 @@
 public class Orders extends fflib_SObjectDomain implements IOrders {
 
+    public static IOrders newInstance(List<Order__c> sObjectList) {
+        return (IOrders)  Application.Domain.newInstance(sObjectList);
+    }
+
     public Orders(List<Order__c> sObjectList) {
         super(sObjectList);
     }
@@ -10,7 +14,7 @@ public class Orders extends fflib_SObjectDomain implements IOrders {
         }
     }
 
-    public void addOrder(List<Order__c> orderList) {
-        insert orderList;
+    public void addOrder() {
+        Database.insert(this.getRecords());
     }
 }

@@ -1,4 +1,9 @@
 public class OrderLineItems extends fflib_SObjectDomain implements IOrderLineItems {
+
+    public static IOrderLineItems newInstance(List<Order_Line_Item__c> sObjectList) {
+        return (IOrderLineItems) Application.Domain.newInstance(sObjectList);
+    }
+
     public OrderLineItems(List<Order_Line_Item__c> sObjectList) {
         super(sObjectList);
     }
@@ -9,7 +14,7 @@ public class OrderLineItems extends fflib_SObjectDomain implements IOrderLineIte
         }
     }
 
-    public void addOrderLineItems(List<Order_Line_Item__c> orderLineItemList) {
-        insert orderLineItemList;
+    public void addOrderLineItems() {
+        Database.insert(this.getRecords());
     }
 }

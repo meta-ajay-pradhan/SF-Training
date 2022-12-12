@@ -1,5 +1,9 @@
 public class ProductsSelector extends fflib_SObjectSelector implements IProductsSelector {
 
+    public static IProductsSelector newInstance() {
+        return (IProductsSelector) Application.Selector.newInstance(Product2.SObjectType);
+    }
+
     public List<Schema.SObjectField> getSObjectFieldList() {
         return new List<Schema.SObjectField> {
             Product2.Name,
@@ -15,6 +19,7 @@ public class ProductsSelector extends fflib_SObjectSelector implements IProducts
 
     public List<Product2> getAll() {
         fflib_QueryFactory query = newQueryFactory();
+        query.setCondition('Available_Units__c > 0');
         return (List<Product2>) Database.query(query.toSOQL());
     }
     public List<Product2> selectById(Set<Id> idSet) {

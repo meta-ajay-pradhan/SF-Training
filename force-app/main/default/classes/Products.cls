@@ -1,4 +1,9 @@
 public class Products extends fflib_SObjectDomain implements IProducts {
+
+    public static IProducts newInstance(List<Product2> sObjectList) {
+        return (IProducts) Application.Domain.newInstance(sObjectList);
+    } 
+
     public Products(List<Product2> sObjectList) {
         super(sObjectList);
     }
@@ -9,7 +14,7 @@ public class Products extends fflib_SObjectDomain implements IProducts {
         }
     }
 
-    public void updateProducts(List<Product2> productList) {
-        update productList;
+    public void updateProducts() {
+        Database.update(this.getRecords());
     }
 }
