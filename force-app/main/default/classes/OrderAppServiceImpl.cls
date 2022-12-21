@@ -1,81 +1,39 @@
 public class OrderAppServiceImpl implements IOrderAppService {
     public static List<Product2> getProductList() {
-        try {
-            List<Product2> productList = ProductsSelector.newInstance().getAll();
-            return productList;
-        } catch (Exception e) {
-            throw new AuraHandledException(e.getMessage());
-        }
+        List<Product2> productList = ProductsSelector.newInstance().getAll();
+        return productList;
     }
 
     public static List<Order_Line_Item__c> getOrderLineProducts() {
-        try {
-            List<Order_Line_Item__c> orderLineItemsList = OrderLineItemsSelector.newInstance().getAll();
-            return orderLineItemsList;
-        } catch (Exception e) {
-            throw new AuraHandledException(e.getMessage());
-        }
+        List<Order_Line_Item__c> orderLineItemsList = OrderLineItemsSelector.newInstance().getAll();
+        return orderLineItemsList;
     }
 
     public static void placeOrder(Integer invoice, Map<Id, Integer> orderedProds) {
-        Savepoint sp = Database.setSavepoint();
-        try {
+        fflib_ISObjectUnitOfWork uow = Application.UnitOfWork.newInstance();
+        
+        Set<Id> prodIds = orderedProds.keySet();
 
-            // fflib_ISObjectUnitOfWork uow = new Application.UnitOfWork.newInstance();
-            
-            Set<Id> prodIds = orderedProds.keySet();
+        List<Product2> productsList = ProductsSelector.newInstance().selectById(prodIds);
+        Order__c order = new Order__c();
+        List<Order__c> orderList = new List<Order__c>{order};
+        Orders.newInstance(orderList).addOrder();
 
-            List<Product2> productsList = ProductsSelector.newInstance().selectById(prodIds);
-            Order__c order = new Order__c();
-            List<Order__c> orderList = new List<Order__c>{order};
-            Orders.newInstance(orderList).addOrder();
+        List<Order_Line_Item__c> orderProducts = new List<Order_Line_Item__c>();
 
-            List<Order_Line_Item__c> orderProducts = new List<Order_Line_Item__c>();
-
-            for(Product2 prod: productsList) {
-                Order_Line_Item__c orderProd = new Order_Line_Item__c();
-                orderProd.Order__c = order.id;
-                orderProd.Price__c = prod.Price__c;
-                orderProd.Quantity__c = orderedProds.get(prod.Id);
-                orderProd.Product__c = prod.Id;
-                orderProducts.add(orderProd);
-                prod.Available_Units__c -= orderedProds.get(prod.Id); 
-            }
-
-            Products.newInstance(productsList).updateProducts();
-            OrderLineItems.newInstance(orderProducts).addOrderLineItems();
-            
-            // uow.commitWork();
-
-        } catch (Exception e) {
-            Database.rollback(sp);
-            throw new AuraHandledException(e.getMessage());
+        for(Product2 prod: productsList) {
+            Order_Line_Item__c orderProd = new Order_Line_Item__c();
+            orderProd.Order__c = order.id;
+            orderProd.Price__c = prod.Price__c;
+            orderProd.Quantity__c = orderedProds.get(prod.Id);
+            orderProd.Product__c = prod.Id;
+            orderProducts.add(orderProd);
+            prod.Available_Units__c -= orderedProds.get(prod.Id); 
         }
-    //     Savepoint sp = Database.setSavepoint();
-    //     try {
-    //         Set<Id> prodIds = orderedProds.keySet();
-    //         List<Product2> products = [SELECT Available_Units__c, Price__c FROM Product2 Where Id in :prodIds];
-    //         Order__c order = new Order__c();
-    //         insert order;
 
-    //         List<Order_Line_Item__c> orderProducts = new List<Order_Line_Item__c>();
-
-    //         for(Product2 prod: products) {
-    //             Order_Line_Item__c orderProd = new Order_Line_Item__c();
-    //             orderProd.Order__c = order.id;
-    //             orderProd.Price__c = prod.Price__c;
-    //             orderProd.Quantity__c = orderedProds.get(prod.Id);
-    //             orderProd.Product__c = prod.Id;
-    //             orderProducts.add(orderProd);
-    //             prod.Available_Units__c -= orderedProds.get(prod.Id); 
-    //         }
-
-    //         update products;
-    //         insert orderProducts;
-            
-    //     } catch (Exception e) {
-    //         Database.rollback(sp);
-    //         throw new AuraHandledException(e.getMessage());
-    //     }
+        Products.newInstance(productsList).updateProducts();
+        OrderLineItems.newInstance(orderProducts).addOrderLineItems();
+        
+        uow.commitWork();
     }
 }

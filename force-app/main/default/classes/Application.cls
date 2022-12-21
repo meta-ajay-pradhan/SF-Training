@@ -1,11 +1,11 @@
 public class Application {
     //UnitOfWork
-    public static final fflib_Application.UnitOfWorkFactory UnitOfWork = 
+    public static final fflib_Application.UnitOfWorkFactory UnitOfWork =
         new fflib_Application.UnitOfWorkFactory(
-            new List<SObjectType> {
+            new List<Schema.SObjectType> {
+                Order__c.SObjectType,
                 Product2.SObjectType,
-                Order_Line_Item__c.SObjectType,
-                Order__c.SObjectType
+                Order_Line_Item__c.SObjectType
             }
         );
 
