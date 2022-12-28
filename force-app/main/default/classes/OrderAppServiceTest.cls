@@ -1,3 +1,9 @@
+/**
+* @author ajay.pradhan@metacube.com
+* @date 2022
+*
+* @description service test class
+*/
 @isTest
 private class OrderAppServiceTest {
 
@@ -22,7 +28,7 @@ private class OrderAppServiceTest {
 
         Application.Selector.setMock(ProductsSelectorMock);
         Test.startTest();
-        List<Product2> resultProductList = OrderAppServiceImpl.getProductList();
+        List<Product2> resultProductList = ProductController.getProductList();
         Test.stopTest();
 
         System.assertEquals(testProdList, resultProductList);
@@ -50,7 +56,7 @@ private class OrderAppServiceTest {
         Application.Selector.setMock(OrderLineItemsSelectorMock);
 
         Test.startTest();
-        List<Order_Line_Item__c> resultList = OrderAppServiceImpl.getOrderLineProducts();
+        List<Order_Line_Item__c> resultList = ProductController.getOrderLineProducts();
         Test.stopTest();
 
         System.assertEquals(testItemList, resultList);
@@ -105,7 +111,7 @@ private class OrderAppServiceTest {
         Application.Selector.setMock(ProductsSelectorMock);
 
         Test.startTest();
-        OrderAppServiceImpl.placeOrder(2342342, testInputParam);
+        ProductController.placeOrder(2342342, testInputParam);
         Test.stopTest();
 
 

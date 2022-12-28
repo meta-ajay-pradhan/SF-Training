@@ -1,15 +1,22 @@
+/**
+* @author ajay.pradhan@metacube.com
+* @date 2022
+*
+* @description logical implemetation of service
+*/
 public class OrderAppServiceImpl implements IOrderAppService {
-    public static List<Product2> getProductList() {
+
+    public List<Product2> getProductList() {
         List<Product2> productList = ProductsSelector.newInstance().getAll();
         return productList;
     }
 
-    public static List<Order_Line_Item__c> getOrderLineProducts() {
+    public List<Order_Line_Item__c> getOrderLineProducts() {
         List<Order_Line_Item__c> orderLineItemsList = OrderLineItemsSelector.newInstance().getAll();
         return orderLineItemsList;
     }
 
-    public static void placeOrder(Integer invoice, Map<Id, Integer> orderedProds) {
+    public void placeOrder(Integer invoice, Map<Id, Integer> orderedProds) {
         fflib_ISObjectUnitOfWork uow = Application.UnitOfWork.newInstance();
         
         Set<Id> prodIds = orderedProds.keySet();

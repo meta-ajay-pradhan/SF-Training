@@ -94,7 +94,7 @@ export default class Products extends LightningElement {
             }
         })
         // end main update krdena hain
-        const updateSelectedProdEvent = new CustomEvent('selectedprodupdate', { detail: [...oldSelectedIds] });
+        const updateSelectedProdEvent = new CustomEvent('selec  tedprodupdate', { detail: [...oldSelectedIds] });
         this.dispatchEvent(updateSelectedProdEvent);
     }
 
